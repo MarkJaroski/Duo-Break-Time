@@ -75,3 +75,4 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
+disallowBlockedSites();
