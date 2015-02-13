@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "Allower",
+    "description": "Use lingots to award progress in Duolingo with temporary access to otherwise blocked sites.",
+    "version": "1.0",
+    "permissions": [ 
+        "webRequest", 
+        "webRequestBlocking", 
+        "<all_urls>" 
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://*.duolingo.com/", "*://*.duolingo.com/show_store"],
+            "js": ["extra_store_item.js"]
+        }
+    ]
+}

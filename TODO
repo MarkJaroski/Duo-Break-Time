@@ -1,0 +1,10 @@
+Some things that still need to be done
+
+* Set up configuration
+
+* Add a landing page for blocked sites
+
+* Decrement the lingot count on purchase
+
+* Rebuild button to avoid erronious call to Duo's purchase webservice
+
