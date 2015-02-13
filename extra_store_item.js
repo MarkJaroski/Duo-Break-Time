@@ -1,4 +1,6 @@
 
+
+// NOTE: this will have to change if you clone this
 var EXT_ID = "jfnbmhkijnmhfahmfkamfpelfhgdlegf";
 
 // TODO consider putting these in the config
