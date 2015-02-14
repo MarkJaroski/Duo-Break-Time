@@ -16,7 +16,7 @@
 
 
 // NOTE: The ID changes if you clone this extension or move it around
-var EXT_ID = "jfnbmhkijnmhfahmfkamfpelfhgdlegf";
+var EXT_ID = "flbjncldlhhmibhkadedknehmeapojoh";
 
 // TODO consider putting these in the config
 var TITLE = "Break Time!";
