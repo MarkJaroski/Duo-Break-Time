@@ -17,9 +17,7 @@
 var duoTabId;
 
 // FIXME get this from the config
-var blockedSites = [
-        "*://*.youtube.com/"
-    ];
+var blockedSites = [ "*://*.youtube.com/" ];
 
 function allowBlockedSites() {
     var allowFor = 45; // FIXME get this from the config
@@ -30,9 +28,9 @@ function allowBlockedSites() {
 function disallowBlockedSites() {
     if (duoTabId != null) chrome.tabs.sendMessage(duoTabId, "time up");
     chrome.webRequest.onBeforeRequest.addListener(
-        interceptRequest;
+        interceptRequest,
         {
-            urls: blockedSites; 
+            urls: blockedSites, 
             types: ["main_frame"]
         },
         ["blocking"]
