@@ -21,7 +21,7 @@ var blockedSites = [ "*://*.youtube.com/" ];
 
 function allowBlockedSites() {
     var allowFor = 1; // FIXME get this from the config
-    setTimeout(disallowBlockedSites, allowFor * 60);
+    setTimeout(disallowBlockedSites, allowFor * 60000);
     chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
 }
 
