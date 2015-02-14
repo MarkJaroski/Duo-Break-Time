@@ -20,8 +20,8 @@ var duoTabId;
 var blockedSites = [ "*://*.youtube.com/" ];
 
 function allowBlockedSites() {
-    var allowFor = 45; // FIXME get this from the config
-    setTimeout(disallowBlockedSites, allowFor);
+    var allowFor = 1; // FIXME get this from the config
+    setTimeout(disallowBlockedSites, allowFor * 60);
     chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
 }
 
