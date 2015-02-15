@@ -18,6 +18,8 @@
 // NOTE: The ID changes if you clone this extension or move it around
 var EXT_ID = "flbjncldlhhmibhkadedknehmeapojoh";
 
+var isEquipped = false;
+
 // TODO consider putting these in the config
 var TITLE = "Break Time!";
 var DESCR = "Each 1 lingot purchase unlocks the list of websites specified by your teacher/parent for 15 minutes.";
@@ -49,7 +51,12 @@ var desc = document.createElement("p");
 
 function resetButton() {
     item.replaceChild(button, equipped);
+    isEquipped = false;
 }
+
+chrome.runtime.sendMessage(EXT_ID, "getState", {}, function(response) {
+    isEquipped = response;
+});
 
 getfor.appendChild(document.createTextNode("Get for:"));
 section_head.appendChild(document.createTextNode("EXTENSION"));
@@ -63,7 +70,13 @@ equipped.appendChild(document.createTextNode(" Equipped"));
 title.appendChild(document.createTextNode(TITLE));
 desc.appendChild(document.createTextNode(DESCR));
 item.appendChild(icon);
-item.appendChild(button);
+
+if (isEquipped) {
+    item.appendChild(equipped);
+} else {
+    item.appendChild(button);
+}
+
 item.appendChild(title);
 item.appendChild(desc);
 shelf.appendChild(item);
@@ -76,15 +89,9 @@ chrome.runtime.onMessage.addListener(
 );
 
 button.addEventListener("click", function() {
-    chrome.runtime.sendMessage(EXT_ID, "spend lingot");
+    chrome.runtime.sendMessage(EXT_ID, "spend lingot", {}, function(response) {});
     item.replaceChild(equipped, button);
 });
-
-var store_view = document.getElementById("rupee-store-view");
-if (store_view.hasChildNodes()) {
-    store = store_view.childNodes[2];
-    store.insertBefore(ext_section, store.childNodes[0]);
-}
 
 var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
@@ -95,7 +102,14 @@ var observer = new MutationObserver(function(mutations) {
     });
 });
 
-var config = { childList: true, subtree: true };
+var bodyObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        var store_view = document.getElementById("rupee-store-view");
+        if (store_view) observer.observe(store_view, {childList: true});
+        if (store = store_view.childNodes[2]) {
+            store.insertBefore(ext_section, store.childNodes[0]);
+        }
+    });
+});
 
-observer.observe(store_view, config);
-
+bodyObserver.observe(document.body, {childList: true});

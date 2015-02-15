@@ -1,6 +1,6 @@
 Some things that still need to be done
 
-* Set up configuration
+* Set up options page
 
 * Add a landing page for blocked sites
 
@@ -8,3 +8,4 @@ Some things that still need to be done
 
 * Rebuild button to avoid erronious call to Duo's purchase webservice
 
+* Add desktop messaging to let the user know how much time is left

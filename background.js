@@ -15,6 +15,9 @@
 // along with Duo-Break-Time.  If not, see <http://www.gnu.org/licenses/>.
 
 var duoTabId;
+var isEquipped = false;
+var allowedTabIds = [];
+var duoUrl = "http://www.duolingo.com/";
 
 // FIXME get this from the config
 var blockedSites = [ "*://*.youtube.com/" ];
@@ -23,18 +26,25 @@ function allowBlockedSites() {
     var allowForMinutes = 1; // FIXME get this from the config
     setTimeout(disallowBlockedSites, allowForMinutes * 60000);
     chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
+    chrome.webRequest.onCompleted.addListener(
+        observeAllowedPage, { urls: blockedSites }
+    );
+    chrome.webRequest.handlerBehaviorChanged();
+    isEquipped = true;
 }
 
 function disallowBlockedSites() {
     if (duoTabId != null) chrome.tabs.sendMessage(duoTabId, "time up");
     chrome.webRequest.onBeforeRequest.addListener(
-        interceptRequest,
-        {
-            urls: blockedSites, 
-            types: ["main_frame"]
-        },
-        ["blocking"]
+        interceptRequest, { urls: blockedSites }, ["blocking"]
     );
+    chrome.webRequest.onCompleted.removeListener(observeAllowedPage);
+    allowedTabIds.forEach(function(tabid, i, array) {
+        chrome.tabs.update(tabid, {url: duoUrl}); // FIXME this is maybe a little abrupt
+    });
+    allowedTabIds = [];
+    chrome.webRequest.handlerBehaviorChanged();
+    isEquipped = false;
 }
 
 function spendLingot() {
@@ -47,7 +57,6 @@ function spendLingot() {
     x.onload = function() {
         // if we're here it worked!
         allowBlockedSites();
-        sendResponse();
     };
     x.onerror = function() {
         errorCallback('Network Error');
@@ -59,17 +68,20 @@ function errorCallback(err) {
     alert(err); // FIXME should use a desktop message, it's nicer
 }
 
-function interceptRequest() {
+function interceptRequest(details) {
     // TODO: consder building a landing page to let the user know what's going on
-    return { redirectUrl: "http://duolingo.com" };
+    return { redirectUrl: duoUrl };
 }
 
-
+function observeAllowedPage(details) {
+    allowedTabIds.push(details.tabId);
+}
 
 chrome.runtime.onMessage.addListener(
     function(message, sender, sendResponse) {
         duoTabId = sender.tab.id;
         if (message == "spend lingot") spendLingot();
+        if (typeof sendResponse != undefined) sendResponse(isEquipped);
     }
 );
 
