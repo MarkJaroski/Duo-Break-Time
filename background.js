@@ -23,14 +23,15 @@ var duoUrl = "http://www.duolingo.com/";
 var blockedSites = [ "*://*.youtube.com/" ];
 
 function allowBlockedSites() {
-    var allowForMinutes = 1; // FIXME get this from the config
-    setTimeout(disallowBlockedSites, allowForMinutes * 60000);
-    chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
-    chrome.webRequest.onCompleted.addListener(
-        observeAllowedPage, { urls: blockedSites }
-    );
-    chrome.webRequest.handlerBehaviorChanged();
-    isEquipped = true;
+    chrome.storage.sync.get({ minutes: 15 }, function (items) {
+        setTimeout(disallowBlockedSites, items.minutes * 60000);
+        chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
+        chrome.webRequest.onCompleted.addListener(
+            observeAllowedPage, { urls: blockedSites }
+        );
+        chrome.webRequest.handlerBehaviorChanged();
+        isEquipped = true;
+    });
 }
 
 function disallowBlockedSites() {
@@ -42,7 +43,7 @@ function disallowBlockedSites() {
     );
     chrome.webRequest.onCompleted.removeListener(observeAllowedPage);
     allowedTabIds.forEach(function(tabid, i, array) {
-        chrome.tabs.update(tabid, {url: duoUrl}); // FIXME this is maybe a little abrupt
+        chrome.tabs.update(tabid, {url: duoUrl}); // TODO this is maybe a little abrupt
     });
     allowedTabIds = [];
     chrome.webRequest.handlerBehaviorChanged();
@@ -50,24 +51,27 @@ function disallowBlockedSites() {
 }
 
 function spendLingot() {
-    var commentID = 6970258; // FIXME get this from the config
-    // construct the URL
-    var URL = "https://www.duolingo.com/comments/" + commentID + "/love";
-    var x = new XMLHttpRequest();
-    x.open('POST', URL); // give-love doesn't accept any data!
-    x.responseType = 'json';
-    x.onload = function() {
-        // if we're here it worked!
-        allowBlockedSites();
-    };
-    x.onerror = function() {
-        errorCallback('Network Error');
-    };
-    x.send();
+    // wataya: 6970258
+    // me: 6969554
+    chrome.storage.sync.get({ commentId: 6969554 }, function(items) {
+        // construct the URL
+        var URL = "https://www.duolingo.com/comments/" + items.commentId + "/love";
+        var x = new XMLHttpRequest();
+        x.open('POST', URL); // give-love doesn't accept any data!
+        x.responseType = 'json';
+        x.onload = function() {
+            // if we're here it worked!
+            allowBlockedSites();
+        };
+        x.onerror = function() {
+            errorCallback('Network Error');
+        };
+        x.send();
+    });
 }
 
 function errorCallback(err) {
-    alert(err); // FIXME should use a desktop message, it's nicer
+    alert(err); // TODO should use a desktop message, it's nicer
 }
 
 function interceptRequest(details) {

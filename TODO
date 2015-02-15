@@ -1,7 +1,5 @@
 Some things that still need to be done
 
-* Set up options page
-
 * Add a landing page for blocked sites
 
 * Decrement the lingot count on purchase
@@ -10,4 +8,6 @@ Some things that still need to be done
 
 * Add desktop messaging to let the user know how much time is left
 
+* Get the comment ID from a duolingo username or maybe use some cool UI to
+  find a comment
 

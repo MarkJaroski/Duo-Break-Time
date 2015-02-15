@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Test Extension Options</title>
+  <style>
+    body: { padding: 10px; }
+  </style>
+</head>
+
+<body>
+
+    <label>
+        <h4>Sites to allow for a lingot:</h4>
+            <select size="1" id="sites" multiple="multiple">
+            <option value="*://*.youtube.com" id="opt_YouTube">YouTube</option>
+        </select>
+    </label>
+
+    <label>
+        <h4>Time to allow access (in minutes):</h4>
+        <select id="minutes">
+            <option value="10" id="10">10</option>
+            <option value="15" id="15">15</option>
+            <option value="30" id="30">30</option>
+            <option value="45" id="45">45</option>
+            <option value="60" id="60">60</option>
+        </select>
+    </label>
+
+    <div id="advanced">
+    <label>
+        <h4>The comment to which to send lingots:</h4>
+        <input id="commentId" type="text" size="8"/>
+        <p>NOTE: by default this gives your student's lingots to me. That's
+            fine of course, but you'll get more use out of them if you give
+            them to yourself. To do this post a <i>useful</i> comment
+            somewhere on a Duolingo discussion, find its ID and put it here.</p>
+    </label>
+    </div>
+
+    <div id="status"></div>
+    <button id="save">Save</button>
+
+    <script src="options.js"></script>
+</body>
+</html>

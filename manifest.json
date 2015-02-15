@@ -18,11 +18,12 @@
     "manifest_version": 2,
     "name": "Duo Break Time",
     "description": "Use lingots to award progress in Duolingo with temporary access to otherwise blocked sites.",
-    "version": "0.71",
+    "version": "0.73",
     "permissions": [ 
         "webRequest", 
         "webRequestBlocking", 
         "tabs",
+        "storage",
         "<all_urls>" 
     ],
     "background": {
@@ -33,5 +34,9 @@
             "matches": ["*://*.duolingo.com/", "*://*.duolingo.com/show_store"],
             "js": ["extra_store_item.js"]
         }
-    ]
+    ],
+    "options_ui": {
+        "page": "options.html",
+        "chrome_style": true
+    }
 }
