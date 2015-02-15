@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Duo-Break-Time.  If not, see <http://www.gnu.org/licenses/>.
 
-var duoTabId;
 var isEquipped = false;
 var allowedTabIds = [];
+var duoTabIds = [];
 var duoUrl = "http://www.duolingo.com/";
 
 // FIXME get this from the config
@@ -34,7 +34,9 @@ function allowBlockedSites() {
 }
 
 function disallowBlockedSites() {
-    if (duoTabId != null) chrome.tabs.sendMessage(duoTabId, "time up");
+    duoTabIds.forEach(function(tabId, i, array) {
+        chrome.tabs.sendMessage(tabId, "time up");
+    });
     chrome.webRequest.onBeforeRequest.addListener(
         interceptRequest, { urls: blockedSites }, ["blocking"]
     );
@@ -79,7 +81,7 @@ function observeAllowedPage(details) {
 
 chrome.runtime.onMessage.addListener(
     function(message, sender, sendResponse) {
-        duoTabId = sender.tab.id;
+        duoTabIds.push(sender.tab.id);
         if (message == "spend lingot") spendLingot();
         if (typeof sendResponse != undefined) sendResponse(isEquipped);
     }
