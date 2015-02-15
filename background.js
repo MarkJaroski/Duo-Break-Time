@@ -42,9 +42,7 @@ function disallowBlockedSites() {
         interceptRequest, { urls: blockedSites }, ["blocking"]
     );
     chrome.webRequest.onCompleted.removeListener(observeAllowedPage);
-    allowedTabIds.forEach(function(tabid, i, array) {
-        chrome.tabs.update(tabid, {url: duoUrl}); // TODO this is maybe a little abrupt
-    });
+    chrome.tabs.remove(allowedTabIds);
     allowedTabIds = [];
     chrome.webRequest.handlerBehaviorChanged();
     isEquipped = false;
