@@ -14,7 +14,7 @@
    id="svg3656"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 2">
+   sodipodi:docname="icon.svg">
   <defs
      id="defs3" />
   <sodipodi:namedview
@@ -24,16 +24,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.2"
-     inkscape:cx="160"
-     inkscape:cy="90"
+     inkscape:zoom="4.8"
+     inkscape:cx="244.43984"
+     inkscape:cy="141.8733"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="646"
-     inkscape:window-height="579"
-     inkscape:window-x="1274"
-     inkscape:window-y="473"
+     inkscape:window-width="1605"
+     inkscape:window-height="881"
+     inkscape:window-x="315"
+     inkscape:window-y="171"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata3660">
@@ -148,31 +148,16 @@
        height="73.370544"
        x="148.31471"
        y="24.653305"
-       inkscape:export-filename="/tmp/lingot_lock_48.png"
-       inkscape:export-xdpi="58.880001"
-       inkscape:export-ydpi="58.880001" />
-    <rect
-       style="fill:none;stroke:#8dbc00;stroke-width:6.704;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="lingot_lock_128.png"
+       inkscape:export-xdpi="157.00999"
+       inkscape:export-ydpi="157.00999" />
+    <path
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#8dbc00;fill-opacity:1;stroke:none;stroke-width:6.704;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+       d="M 183.46875 25.40625 C 174.6682 25.40625 167.5 32.605697 167.5 41.40625 L 167.5 46.5625 L 174.1875 46.5625 L 174.1875 41.40625 C 174.1875 36.203752 178.26625 32.125 183.46875 32.125 L 185.1875 32.125 C 190.39 32.125 194.46875 36.203752 194.46875 41.40625 L 194.46875 55.84375 C 194.46875 59.36323 192.59966 62.361451 189.78125 63.9375 L 189.78125 71.15625 C 196.36122 69.170244 201.1875 63.049417 201.1875 55.84375 L 201.1875 41.40625 C 201.1875 32.605697 193.98805 25.40625 185.1875 25.40625 L 183.46875 25.40625 z "
        id="rect42015-2"
-       width="26.985926"
-       height="39.719841"
-       x="170.84233"
-       y="28.764818"
-       ry="12.638132"
-       inkscape:export-filename="/tmp/lingot_lock_48.png"
-       inkscape:export-xdpi="58.880001"
-       inkscape:export-ydpi="58.880001" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       id="rect42017-9"
-       width="33.332893"
-       height="34.831001"
-       x="156.43303"
-       y="46.564808"
-       ry="0"
-       inkscape:export-filename="/tmp/lingot_lock_48.png"
-       inkscape:export-xdpi="58.880001"
-       inkscape:export-ydpi="58.880001" />
+       inkscape:export-filename="lingot_lock_128.png"
+       inkscape:export-xdpi="157.00999"
+       inkscape:export-ydpi="157.00999" />
     <rect
        style="fill:#8dbc00;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect41220-3"
@@ -181,15 +166,15 @@
        x="153.7971"
        y="52.641682"
        ry="6.042007"
-       inkscape:export-filename="/tmp/lingot_lock_48.png"
-       inkscape:export-xdpi="58.880001"
-       inkscape:export-ydpi="58.880001" />
+       inkscape:export-filename="lingot_lock_128.png"
+       inkscape:export-xdpi="157.00999"
+       inkscape:export-ydpi="157.00999" />
     <g
        id="g57-2"
        transform="matrix(0.41820246,0,0,0.41820246,139.99877,0.02478707)"
-       inkscape:export-filename="/tmp/lingot_lock_48.png"
-       inkscape:export-xdpi="58.880001"
-       inkscape:export-ydpi="58.880001">
+       inkscape:export-filename="lingot_lock_128.png"
+       inkscape:export-xdpi="157.00999"
+       inkscape:export-ydpi="157.00999">
       <g
          id="g59-4">
         <polygon
