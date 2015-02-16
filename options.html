@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Test Extension Options</title>
+  <title>Duo Break Time</title>
   <style>
     body: { padding: 10px; }
   </style>
@@ -10,15 +10,16 @@
 <body>
 
     <label>
-        <h4>Sites to allow for a lingot:</h4>
+        <h4>Sites block/allow:</h4>
             <select size="1" id="sites" multiple="multiple">
             <option value="*://*.youtube.com" id="opt_YouTube">YouTube</option>
         </select>
     </label>
 
     <label>
-        <h4>Time to allow access (in minutes):</h4>
+        <h4>Time per lingot (in minutes):</h4>
         <select id="minutes">
+            <option value="5" id="5">5</option>
             <option value="10" id="10">10</option>
             <option value="15" id="15">15</option>
             <option value="30" id="30">30</option>
@@ -31,10 +32,14 @@
     <label>
         <h4>The comment to which to send lingots:</h4>
         <input id="commentId" type="text" size="8"/>
-        <p>NOTE: by default this gives your student's lingots to me. That's
-            fine of course, but you'll get more use out of them if you give
-            them to yourself. To do this post a <i>useful</i> comment
-            somewhere on a Duolingo discussion, find its ID and put it here.</p>
+        <p style="font-size: smaller">This number is the ID of a comment on
+            the Duolingo discussion boards. The default is the original <a
+                    href="https://www.duolingo.com/comment/6969554">announcement</a>
+            for this project.</p>
+        <p style="font-size: smaller">It probably makes more sense to
+            collect the lingots yourself. To do that make a <i>useful</i>
+            comment somewhere on a Duolingo discussion, find its ID and put
+            it here.</p>
     </label>
     </div>
 
