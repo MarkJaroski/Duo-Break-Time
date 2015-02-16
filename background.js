@@ -15,8 +15,6 @@
 // along with Duo-Break-Time.  If not, see <http://www.gnu.org/licenses/>.
 
 var isEquipped = false;
-var allowedTabIds = [];
-var duoTabIds = [];
 var duoUrl = "http://www.duolingo.com/";
 
 // FIXME get this from the config
@@ -35,22 +33,27 @@ function allowBlockedSites() {
 }
 
 function disallowBlockedSites() {
-    duoTabIds.forEach(function(tabId, i, array) {
-        chrome.tabs.sendMessage(tabId, "time up");
+    chrome.tabs.query({url: "*://*.duolingo.com/"}, function(result) {
+        result.ForEach(function(tab) {
+            chrome.tabs.sendMessage(tab.id, "time up");
+        });
     });
     chrome.webRequest.onBeforeRequest.addListener(
         interceptRequest, { urls: blockedSites }, ["blocking"]
     );
     chrome.webRequest.onCompleted.removeListener(observeAllowedPage);
-    chrome.tabs.remove(allowedTabIds);
-    allowedTabIds = [];
+    chrome.tabs.query({url: blockedSites}, function(result) {
+        result.forEach(function(tab) {
+            chrome.tabs.remove(tab.id); // TODO this is maybe a little abrupt
+        });
+    });
     chrome.webRequest.handlerBehaviorChanged();
     isEquipped = false;
 }
 
 function spendLingot() {
     // wataya: 6970258
-    // me: 6969554
+    //     me: 6969554
     chrome.storage.sync.get({ commentId: 6969554 }, function(items) {
         // construct the URL
         var URL = "https://www.duolingo.com/comments/" + items.commentId + "/love";
@@ -77,13 +80,8 @@ function interceptRequest(details) {
     return { redirectUrl: duoUrl };
 }
 
-function observeAllowedPage(details) {
-    allowedTabIds.push(details.tabId);
-}
-
 chrome.runtime.onMessage.addListener(
     function(message, sender, sendResponse) {
-        duoTabIds.push(sender.tab.id);
         if (message == "spend lingot") spendLingot();
         if (typeof sendResponse != undefined) sendResponse(isEquipped);
     }

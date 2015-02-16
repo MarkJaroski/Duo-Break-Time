@@ -18,6 +18,8 @@ function save_options() {
 function restore_options() {
   chrome.storage.sync.get({
     minutes: 15,
+    // wataya: 6970258
+    //     me: 6969554
     commentId: 6970258
   }, function(items) {
     document.getElementById(items.minutes).selected = true;
