@@ -16,7 +16,7 @@
 
 
 // NOTE: The ID changes if you clone this extension or move it around
-var EXT_ID = "flbjncldlhhmibhkadedknehmeapojoh";
+var EXT_ID = "lakkigdpjdfegegjilnjpliocofnddfk";
 
 var isEquipped = false;
 
