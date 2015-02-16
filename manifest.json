@@ -26,6 +26,10 @@
         "storage",
         "<all_urls>" 
     ],
+    "icons": { 
+        "48": "lingot_lock_48.png",
+       "128": "lingot_lock_128.png" 
+    },
     "background": {
         "scripts": ["background.js"]
     },
