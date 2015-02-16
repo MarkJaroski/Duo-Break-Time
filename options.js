@@ -1,6 +1,7 @@
 // Saves options to chrome.storage.sync.
 function save_options() {
   var minutes = document.getElementById('minutes').value;
+  var commentId = document.getElementById('commentId').value;
   chrome.storage.sync.set({
     minutes: minutes,
     commentId: commentId
@@ -29,4 +30,3 @@ function restore_options() {
 
 document.addEventListener('DOMContentLoaded', restore_options);
 document.getElementById('save').addEventListener('click', save_options);
-

@@ -31,7 +31,9 @@
        "128": "lingot_lock_128.png" 
     },
     "background": {
-        "scripts": ["background.js"]
+        "scripts": [
+            "background.js"
+            ]
     },
     "content_scripts": [
         {

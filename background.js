@@ -18,35 +18,37 @@ var isEquipped = false;
 var duoUrl = "http://www.duolingo.com/";
 
 // FIXME get this from the config
-var blockedSites = [ "*://*.youtube.com/" ];
+var blockedSites = [ "*://*.youtube.com/*" ];
 
 function allowBlockedSites() {
     chrome.storage.sync.get({ minutes: 15 }, function (items) {
         setTimeout(disallowBlockedSites, items.minutes * 60000);
         chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
-        chrome.webRequest.onCompleted.addListener(
-            observeAllowedPage, { urls: blockedSites }
-        );
         chrome.webRequest.handlerBehaviorChanged();
         isEquipped = true;
     });
 }
 
 function disallowBlockedSites() {
-    chrome.tabs.query({url: "*://*.duolingo.com/"}, function(result) {
-        result.ForEach(function(tab) {
+    chrome.tabs.query({url: ["*://*.duolingo.com/*"]}, function(result) {
+        var duoTabCount = 0;
+        result.forEach(function(tab) {
+            duoTabCount++;
             chrome.tabs.sendMessage(tab.id, "time up");
+        });
+        chrome.tabs.query({url: blockedSites}, function(result) {
+            result.forEach(function(tab, i) {
+                if (duoTabCount == 0 && i == 0) {
+                    chrome.tabs.update(tab.id, {url: duoUrl});
+                } else {
+                    chrome.tabs.remove(tab.id); // TODO this is maybe a little abrupt
+                }
+            });
         });
     });
     chrome.webRequest.onBeforeRequest.addListener(
         interceptRequest, { urls: blockedSites }, ["blocking"]
     );
-    chrome.webRequest.onCompleted.removeListener(observeAllowedPage);
-    chrome.tabs.query({url: blockedSites}, function(result) {
-        result.forEach(function(tab) {
-            chrome.tabs.remove(tab.id); // TODO this is maybe a little abrupt
-        });
-    });
     chrome.webRequest.handlerBehaviorChanged();
     isEquipped = false;
 }
@@ -54,7 +56,7 @@ function disallowBlockedSites() {
 function spendLingot() {
     // wataya: 6970258
     //     me: 6969554
-    chrome.storage.sync.get({ commentId: 6969554 }, function(items) {
+    chrome.storage.sync.get({ "commentId": 6969554 }, function(items) {
         // construct the URL
         var URL = "https://www.duolingo.com/comments/" + items.commentId + "/love";
         var x = new XMLHttpRequest();
