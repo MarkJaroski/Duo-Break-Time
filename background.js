@@ -53,6 +53,7 @@ function disallowBlockedSites() {
     isEquipped = false;
 }
 
+
 function spendLingot() {
     // wataya: 6970258
     //     me: 6969554
@@ -79,6 +80,7 @@ function errorCallback(err) {
 
 function interceptRequest(details) {
     // TODO: consder building a landing page to let the user know what's going on
+    if (details.url.indexOf('favicon.ico') != -1) return;
     return { redirectUrl: duoUrl };
 }
 

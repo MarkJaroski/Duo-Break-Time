@@ -2,50 +2,76 @@
 <html>
 <head>
   <title>Duo Break Time</title>
-  <style>
-    body: { padding: 10px; }
-  </style>
+  <link href="options.css" rel="stylesheet"/>
 </head>
 
-<body>
+<body i18n-values=".style.fontFamily:fontfamily;.style.fontSize:fontsize" class="uber-frame" style="font-family: Ubuntu, Arial, sans-serif; font-size: 75%;">
 
-    <label>
-        <h4>Sites block/allow:</h4>
-            <select size="1" id="sites" multiple="multiple">
-            <option value="*://*.youtube.com/*" id="opt_YouTube">YouTube</option>
-        </select>
-    </label>
+    <div>
+        <h3>Basic</h3>
+        <label>
+            <input id="minutes" value="15" type="text" size="2"/>
+            Break time in minutes.
+        </label>
+    </div>
 
-    <label>
-        <h4>Time per lingot (in minutes):</h4>
-        <select id="minutes">
-            <option value="5" id="5">5</option>
-            <option value="10" id="10">10</option>
-            <option value="15" id="15">15</option>
-            <option value="30" id="30">30</option>
-            <option value="45" id="45">45</option>
-            <option value="60" id="60">60</option>
-        </select>
-    </label>
+    <div>
+        <h3>Break Time Sites</h3>
+        <ul class="site-list" id="site-list">
+            <li>
+                <label class="select" id="sitelist-select-all">
+                    <input type="checkbox" />Select all
+                    <input type="button" id="delete-selected" value="Delete" class="site-list-control hidden"/>
+                </label>
+            </li>
+        </ul>
+        <input type="url" size="15" id="site-to-add"/>
+        <button id="add-site" class="site-list-control">Add</button>
+    </div>
+    
+
+    <h3>Blocking Mode</h3>
+    <div class="radio controlled-setting-with-label" id="newtab-section-content">
+        <label>
+            <input type="radio" id="mode_blacklist" name="blocking_mode">Blacklist</input>
+        </label>
+        <label>
+            <input type="radio" id="mode_whitelist" name="blocking_mode">Whitelist</input>
+        </label>
+    </div>
+
+
+    <div class="whitelist hidden" id="whitelist">
+        <h3>Whitelist</h3>
+        <ul class="site-list" id="white-list">
+            <li>
+                <label class="select" >
+                    <input type="checkbox" id="whitelist-select-all"/>Select all
+                    <input type="button" id="delete-whitelist-selected" value="Delete" class="site-list-control hidden"/>
+                </label>
+            </li>
+            <li>
+                <label class="select">
+                    <input type="checkbox" disabled="disabled" id="duo-check" value="*://*.duolingo.com/*"/>
+                    <img id="duo" src="https://s2.googleusercontent.com/s2/favicons?domain=www.duolingo.com&amp;sz=32" class="favicon" />
+                    <span class="domain-text">www.duolingo.com</span>
+                </label>
+            </li>
+        </ul>
+        <input type="url" size="15" id="whitelist-site-to-add"/>
+        <button id="add-whitelist-site" class="site-list-control">Add</button>
+    </div>
+
 
     <div id="advanced">
+        <h3>Advanced</h3>
     <label>
-        <h4>The comment to which to send lingots:</h4>
         <input id="commentId" type="text" size="8"/>
-        <p style="font-size: smaller">This number is the ID of a comment on
-            the Duolingo discussion boards. The default is the original <a
-                    href="https://www.duolingo.com/comment/6969554">announcement</a>
-            for this project.</p>
-        <p style="font-size: smaller">It probably makes more sense to
-            collect the lingots yourself. To do that make a <i>useful</i>
-            comment somewhere on a Duolingo discussion, find its ID and put
-            it here.</p>
+        Comment ID <a href="https://github.com/MarkJaroski/Duo-Break-Time/wiki/Option:-CommentId">help</a>
     </label>
     </div>
 
-    <div id="status"></div>
-    <button id="save">Save</button>
-
+    <script src="URI.js"></script>
     <script src="options.js"></script>
 </body>
 </html>

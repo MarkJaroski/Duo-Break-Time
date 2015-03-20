@@ -25,7 +25,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.8"
-     inkscape:cx="244.43984"
+     inkscape:cx="207.77317"
      inkscape:cy="141.8733"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -34,7 +34,8 @@
      inkscape:window-height="881"
      inkscape:window-x="315"
      inkscape:window-y="171"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0"
+     inkscape:snap-global="true" />
   <metadata
      id="metadata3660">
     <rdf:RDF>
@@ -142,15 +143,15 @@
          style="opacity:0.3;fill:#f77f7f" />
     </g>
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       style="fill:none;fill-opacity:1;stroke:none"
        id="rect42100-4"
        width="73.370544"
        height="73.370544"
        x="148.31471"
        y="24.653305"
-       inkscape:export-filename="lingot_lock_128.png"
-       inkscape:export-xdpi="157.00999"
-       inkscape:export-ydpi="157.00999" />
+       inkscape:export-filename="lingot_lock_48.png"
+       inkscape:export-xdpi="58.880001"
+       inkscape:export-ydpi="58.880001" />
     <path
        style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#8dbc00;fill-opacity:1;stroke:none;stroke-width:6.704;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
        d="M 183.46875 25.40625 C 174.6682 25.40625 167.5 32.605697 167.5 41.40625 L 167.5 46.5625 L 174.1875 46.5625 L 174.1875 41.40625 C 174.1875 36.203752 178.26625 32.125 183.46875 32.125 L 185.1875 32.125 C 190.39 32.125 194.46875 36.203752 194.46875 41.40625 L 194.46875 55.84375 C 194.46875 59.36323 192.59966 62.361451 189.78125 63.9375 L 189.78125 71.15625 C 196.36122 69.170244 201.1875 63.049417 201.1875 55.84375 L 201.1875 41.40625 C 201.1875 32.605697 193.98805 25.40625 185.1875 25.40625 L 183.46875 25.40625 z "
