@@ -6,6 +6,7 @@
     "permissions": [ 
         "webRequest", 
         "webRequestBlocking", 
+        "notifications",
         "tabs",
         "storage",
         "<all_urls>" 

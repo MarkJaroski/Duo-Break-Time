@@ -15,28 +15,55 @@
 // along with Duo-Break-Time.  If not, see <http://www.gnu.org/licenses/>.
 
 var isEquipped = false;
-var duoUrl = "http://www.duolingo.com/";
+var     duoUrl = "http://www.duolingo.com/";
+var    appName = "Duo Break Time";
+var    iconUrl = "lingot_lock_128.png";
+var duoPattern = "*://*.duolingo.com/*";
 
-// FIXME get this from the config
-var blockedSites = [ "*://*.youtube.com/*" ];
+var blacklist = [];
+var whitelist = [];
 
-function allowBlockedSites() {
-    chrome.storage.sync.get({ minutes: 15 }, function (items) {
-        setTimeout(disallowBlockedSites, items.minutes * 60000);
+function updateBlacklist() {
+    chrome.storage.sync.get({ blacklist: [{
+            pattern: "*://*.youtube.com/*"
+    }] }, function (item) {
+        blacklist = [];
+        var sites = item.blacklist;
+        sites.forEach(function (site) {
+            blacklist.push(site.pattern);
+        });
+    });
+}
+
+function updateWhitelist() {
+    chrome.storage.sync.get({ whitelist: [{
+            pattern: "*://*.khanacademy.com/*"
+    }] }, function (item) {
+        whitelist = [];
+        var sites = item.whitelist;
+        sites.forEach(function (site) {
+            whitelist.push(site.pattern);
+        });
+    });
+}
+
+function allow() {
+    chrome.storage.sync.get({ minutes: 15 }, function (item) {
+        setTimeout(disallow, item.minutes * 60000);
         chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
         chrome.webRequest.handlerBehaviorChanged();
         isEquipped = true;
     });
 }
 
-function disallowBlockedSites() {
+function disallow() {
     chrome.tabs.query({url: ["*://*.duolingo.com/*"]}, function(result) {
         var duoTabCount = 0;
         result.forEach(function(tab) {
             duoTabCount++;
             chrome.tabs.sendMessage(tab.id, "time up");
         });
-        chrome.tabs.query({url: blockedSites}, function(result) {
+        chrome.tabs.query({url: blacklist}, function(result) {
             result.forEach(function(tab, i) {
                 if (duoTabCount == 0 && i == 0) {
                     chrome.tabs.update(tab.id, {url: duoUrl});
@@ -47,7 +74,7 @@ function disallowBlockedSites() {
         });
     });
     chrome.webRequest.onBeforeRequest.addListener(
-        interceptRequest, { urls: blockedSites }, ["blocking"]
+        interceptRequest, { urls: blacklist }, ["blocking"]
     );
     chrome.webRequest.handlerBehaviorChanged();
     isEquipped = false;
@@ -65,21 +92,34 @@ function spendLingot() {
         x.responseType = 'json';
         x.onload = function() {
             // if we're here it worked!
-            allowBlockedSites();
+            allow();
         };
         x.onerror = function() {
-            errorCallback('Network Error');
+            errorCallback('Network error: lingot not spent');
         };
         x.send();
     });
 }
 
 function errorCallback(err) {
-    alert(err); // TODO should use a desktop message, it's nicer
+    var notice = {
+        type: basic,
+        title: appTitle,
+        iconUrl: "lingot_lock_128.png",
+        message: err
+    };
+    chrome.notifications.create('duoBreakTime-error', notice, function() {});
 }
 
 function interceptRequest(details) {
-    // TODO: consder building a landing page to let the user know what's going on
+    // TODO: get the URL from details and add it to the message
+    var notice = {
+        type: basic,
+        title: appTitle,
+        iconUrl: iconUrl,
+        message: "Access denied. You need to spend a lingot!"
+    };
+    chrome.notifications.create('duoBreakTime-error', notice, function() {});
     if (details.url.indexOf('favicon.ico') != -1) return;
     return { redirectUrl: duoUrl };
 }
@@ -91,4 +131,5 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-disallowBlockedSites();
+updateBlacklist();
+disallow();
