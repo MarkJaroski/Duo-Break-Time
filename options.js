@@ -69,6 +69,7 @@ function restore_options() {
 }
 
 function addToSitelist () {
+    // TODO don't let the user add Duo to this list!
     var textbox = document.getElementById("site-to-add");
     var list = document.getElementById("site-list");
     checkDomainName(textbox.value, list);

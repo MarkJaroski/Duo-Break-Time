@@ -20,35 +20,11 @@ var    appName = "Duo Break Time";
 var    iconUrl = "lingot_lock_128.png";
 var duoPattern = "*://*.duolingo.com/*";
 
-var blacklist = [];
-var whitelist = [];
-
-function updateBlacklist() {
-    chrome.storage.sync.get({ blacklist: [{
-            pattern: "*://*.youtube.com/*"
-    }] }, function (item) {
-        blacklist = [];
-        var sites = item.blacklist;
-        sites.forEach(function (site) {
-            blacklist.push(site.pattern);
-        });
-    });
-}
-
-function updateWhitelist() {
-    chrome.storage.sync.get({ whitelist: [{
-            pattern: "*://*.khanacademy.com/*"
-    }] }, function (item) {
-        whitelist = [];
-        var sites = item.whitelist;
-        sites.forEach(function (site) {
-            whitelist.push(site.pattern);
-        });
-    });
-}
 
 function allow() {
-    chrome.storage.sync.get({ minutes: 15 }, function (item) {
+    chrome.storage.sync.get({ 
+            minutes: 15,
+    }, function (item) {
         setTimeout(disallow, item.minutes * 60000);
         chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
         chrome.webRequest.handlerBehaviorChanged();
@@ -57,27 +33,56 @@ function allow() {
 }
 
 function disallow() {
-    chrome.tabs.query({url: ["*://*.duolingo.com/*"]}, function(result) {
-        var duoTabCount = 0;
-        result.forEach(function(tab) {
-            duoTabCount++;
-            chrome.tabs.sendMessage(tab.id, "time up");
+    chrome.storage.sync.get({ 
+            minutes: 15,
+            blacklist: [{ pattern: "*://*.youtube.com/*" }],
+            useWhitelist: false
+    }, function (item) {
+
+        // convert blacklist to an array of patterns
+        var blacklist = [];
+        var sites = item.blacklist;
+        sites.forEach(function (site) {
+            blacklist.push(site.pattern);
         });
-        chrome.tabs.query({url: blacklist}, function(result) {
-            result.forEach(function(tab, i) {
-                if (duoTabCount == 0 && i == 0) {
-                    chrome.tabs.update(tab.id, {url: duoUrl});
-                } else {
-                    chrome.tabs.remove(tab.id); // TODO this is maybe a little abrupt
-                }
+
+        // close active tabs, replacing the last one with duo
+        chrome.tabs.query({url: ["*://*.duolingo.com/*"]}, function(result) {
+            var duoTabCount = 0;
+            result.forEach(function(tab) {
+                duoTabCount++;
+                chrome.tabs.sendMessage(tab.id, "time up");
+            });
+            chrome.tabs.query({url: blacklist}, function(result) {
+                result.forEach(function(tab, i) {
+                    if (duoTabCount == 0 && i == 0) {
+                        chrome.tabs.update(tab.id, { url: duoUrl });
+                    } else {
+                        chrome.tabs.remove(tab.id); // TODO this is maybe a little abrupt
+                    }
+                });
             });
         });
+
+        // enable blocking
+        chrome.webRequest.onBeforeRequest.addListener(
+            interceptRequest, { urls: blacklist, types: [ "main_frame"] }, ["blocking"]
+        );
+
+        // whitelisting requires a second listener
+        if (item.useWhitelist) {
+            chrome.webRequest.onBeforeRequest.addListener(
+                whitelistIntercept, { types: [ "main_frame" ] }, ["blocking"]
+            );
+        } else {
+            chrome.webRequest.onBeforeRequest.removeListener(whitelistIntercept);
+        }
+
+        chrome.webRequest.handlerBehaviorChanged();
+
+        // make the item available in the lingot store
+        isEquipped = false;
     });
-    chrome.webRequest.onBeforeRequest.addListener(
-        interceptRequest, { urls: blacklist }, ["blocking"]
-    );
-    chrome.webRequest.handlerBehaviorChanged();
-    isEquipped = false;
 }
 
 
@@ -104,24 +109,59 @@ function spendLingot() {
 function errorCallback(err) {
     var notice = {
         type: basic,
-        title: appTitle,
+        title: appName,
         iconUrl: "lingot_lock_128.png",
         message: err
     };
     chrome.notifications.create('duoBreakTime-error', notice, function() {});
 }
 
+// This function handles our blacklist
 function interceptRequest(details) {
-    // TODO: get the URL from details and add it to the message
+    var uri = new URI(details.url);
     var notice = {
-        type: basic,
-        title: appTitle,
+        type: "basic",
+        title: appName,
         iconUrl: iconUrl,
-        message: "Access denied. You need to spend a lingot!"
+        message: "Access to " + uri.domain() + " will cost a lingot!"
     };
     chrome.notifications.create('duoBreakTime-error', notice, function() {});
-    if (details.url.indexOf('favicon.ico') != -1) return;
     return { redirectUrl: duoUrl };
+}
+
+// This allows BOTH the whitelist and blacklist, but blocks everything else
+function whitelistIntercept(details) {
+    chrome.storage.sync.get({ 
+            blacklist: [{ name: "www.youtube.com" }],
+            whitelist: [{ name: "www.khanacademy.com" }]
+    }, function (item) {
+
+        // convert blacklist to an array of patterns
+        var allowed = new URI({host: "www.duolingo.com"});
+        var sites = item.blacklist;
+        sites.concat(item.whitelist);
+        sites.forEach(function (site) {
+            allowed.push(new URI({ host: site.name }));
+        });
+
+        var uri = new URI(details.url);
+
+        // don't block matches
+        allowed.forEach(function(site) {
+            if (uri.domain() == site.domain()) return;
+        });
+
+        // notify the user
+        var notice = {
+            type: "basic",
+            title: appName,
+            iconUrl: iconUrl,
+            message: "Access to " + uri.domain() + " is not allowed."
+        };
+        chrome.notifications.create('duoBreakTime-error', notice, function() {});
+
+        return { redirectUrl: duoUrl };
+    });
 }
 
 chrome.runtime.onMessage.addListener(
@@ -131,5 +171,4 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-updateBlacklist();
 disallow();
