@@ -8,7 +8,17 @@ function save_options() {
     useWhitelist : document.getElementById("mode_whitelist").checked
     };
     console.log("saving: " + data);
-    chrome.storage.sync.set(data);
+    chrome.storage.sync.set(data, function() {
+        chrome.runtime.sendMessage(null, "duo-options-saved", {}, function(resp) {});
+    });
+}
+
+function validateMinutes() {
+    var min = document.getElementById('minutes');
+    console.log("validating " + min.value);
+    if (!min.value) min.value = 15;
+    if (min.value < 1) min.value = 1;
+    save_options();
 }
 
 // Restores select box and checkbox state using the preferences
@@ -33,7 +43,7 @@ function restore_options() {
     document.getElementById('commentId').defaultValue = items.commentId;
     document.getElementById('commentId').addEventListener('change', save_options);
     document.getElementById('minutes').defaultValue = items.minutes;
-    document.getElementById('minutes').addEventListener('change', save_options);
+    document.getElementById('minutes').addEventListener('change', validateMinutes);
     if (items.useWhitelist) {
         showWhitelist();
         document.getElementById("mode_whitelist").checked = true;

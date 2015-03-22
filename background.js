@@ -14,75 +14,97 @@
 // You should have received a copy of the GNU General Public License
 // along with Duo-Break-Time.  If not, see <http://www.gnu.org/licenses/>.
 
-var isEquipped = false;
 var     duoUrl = "http://www.duolingo.com/";
+var  gitHubUrl = "http://www.github.com/";
 var    appName = "Duo Break Time";
 var    iconUrl = "lingot_lock_128.png";
 var duoPattern = "*://*.duolingo.com/*";
 
+var   isEquipped = false;
+var useWhitelist = false;
+var    blacklist = [];
+var      allowed = [];
+var      minutes = 15;
 
-function allow() {
-    chrome.storage.sync.get({ 
-            minutes: 15,
-    }, function (item) {
-        setTimeout(disallow, item.minutes * 60000);
-        chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
-        chrome.webRequest.handlerBehaviorChanged();
-        isEquipped = true;
-    });
-}
-
-function disallow() {
+function updateOptions(callback) {
     chrome.storage.sync.get({ 
             minutes: 15,
             blacklist: [{ pattern: "*://*.youtube.com/*" }],
+            whitelist: [{ name: "www.khanacademy.com" }],
             useWhitelist: false
     }, function (item) {
 
+        console.log("updating options");
+
+        minutes = item.minutes;
+
         // convert blacklist to an array of patterns
-        var blacklist = [];
         var sites = item.blacklist;
         sites.forEach(function (site) {
             blacklist.push(site.pattern);
         });
 
-        // close active tabs, replacing the last one with duo
-        chrome.tabs.query({url: ["*://*.duolingo.com/*"]}, function(result) {
-            var duoTabCount = 0;
-            result.forEach(function(tab) {
-                duoTabCount++;
-                chrome.tabs.sendMessage(tab.id, "time up");
-            });
-            chrome.tabs.query({url: blacklist}, function(result) {
-                result.forEach(function(tab, i) {
-                    if (duoTabCount == 0 && i == 0) {
-                        chrome.tabs.update(tab.id, { url: duoUrl });
-                    } else {
-                        chrome.tabs.remove(tab.id); // TODO this is maybe a little abrupt
-                    }
-                });
-            });
+        //store URIs for whitelist blocking
+        var duo = new URI(duoUrl);
+        var git = new URI(gitHubUrl);
+        allowed = [ duo, git ];
+        var sites = item.blacklist;
+        sites = sites.concat(item.whitelist);
+        sites.forEach(function (site) {
+            allowed.push(new URI("http://" + site.name));
         });
-
-        // enable blocking
-        chrome.webRequest.onBeforeRequest.addListener(
-            interceptRequest, { urls: blacklist, types: [ "main_frame"] }, ["blocking"]
-        );
 
         // whitelisting requires a second listener
         if (item.useWhitelist) {
+            useWhitelist = true;
             chrome.webRequest.onBeforeRequest.addListener(
-                whitelistIntercept, { types: [ "main_frame" ] }, ["blocking"]
+                whitelistIntercept, { urls: ["*://*/*"], types: [ "main_frame" ] }, ["blocking"]
             );
         } else {
             chrome.webRequest.onBeforeRequest.removeListener(whitelistIntercept);
         }
 
-        chrome.webRequest.handlerBehaviorChanged();
-
-        // make the item available in the lingot store
-        isEquipped = false;
+        callback();
     });
+}
+
+
+function allow() {
+    setTimeout(disallow, minutes * 60000);
+    chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
+    chrome.webRequest.handlerBehaviorChanged();
+    isEquipped = true;
+}
+
+function disallow() {
+    // close active tabs, replacing the last one with duo
+    chrome.tabs.query({url: ["*://*.duolingo.com/*"]}, function(result) {
+        var duoTabCount = 0;
+        result.forEach(function(tab) {
+            duoTabCount++;
+            // make the item available in any existing ligot store page
+            chrome.tabs.sendMessage(tab.id, "time up"); 
+        });
+        chrome.tabs.query({url: blacklist}, function(result) {
+            result.forEach(function(tab, i) {
+                if (duoTabCount == 0 && i == 0) {
+                    chrome.tabs.update(tab.id, { url: duoUrl });
+                } else {
+                    chrome.tabs.remove(tab.id); // TODO this is maybe a little abrupt
+                }
+            });
+        });
+    });
+
+    // enable blocking
+    chrome.webRequest.onBeforeRequest.addListener(
+        interceptRequest, { urls: blacklist, types: [ "main_frame"] }, ["blocking"]
+    );
+
+    chrome.webRequest.handlerBehaviorChanged();
+
+    // make the item available in new lingot store pages
+    isEquipped = false;
 }
 
 
@@ -118,6 +140,7 @@ function errorCallback(err) {
 
 // This function handles our blacklist
 function interceptRequest(details) {
+    console.log("Blacklist intercept");
     var uri = new URI(details.url);
     var notice = {
         type: "basic",
@@ -131,44 +154,43 @@ function interceptRequest(details) {
 
 // This allows BOTH the whitelist and blacklist, but blocks everything else
 function whitelistIntercept(details) {
-    chrome.storage.sync.get({ 
-            blacklist: [{ name: "www.youtube.com" }],
-            whitelist: [{ name: "www.khanacademy.com" }]
-    }, function (item) {
 
-        // convert blacklist to an array of patterns
-        var allowed = new URI({host: "www.duolingo.com"});
-        var sites = item.blacklist;
-        sites.concat(item.whitelist);
-        sites.forEach(function (site) {
-            allowed.push(new URI({ host: site.name }));
-        });
+    console.log("Whitelist intercept");
 
-        var uri = new URI(details.url);
+    var uri = new URI(details.url);
+    var whitelisted = false;
 
-        // don't block matches
-        allowed.forEach(function(site) {
-            if (uri.domain() == site.domain()) return;
-        });
-
-        // notify the user
-        var notice = {
-            type: "basic",
-            title: appName,
-            iconUrl: iconUrl,
-            message: "Access to " + uri.domain() + " is not allowed."
-        };
-        chrome.notifications.create('duoBreakTime-error', notice, function() {});
-
-        return { redirectUrl: duoUrl };
+    // don't block matches
+    allowed.forEach(function(site) {
+        if (uri.domain() == site.domain()) {
+            console.log("Allowing " + uri.domain());
+            whitelisted = true;
+        }
     });
+
+    if (whitelisted) return;
+
+    console.log("Disallowing " + uri.domain());
+
+    // notify the user
+    var notice = {
+        type: "basic",
+        title: appName,
+        iconUrl: iconUrl,
+        message: "Access to " + uri.domain() + " is not allowed."
+    };
+    chrome.notifications.create('duoBreakTime-error', notice, function() {});
+
+    return { redirectUrl: duoUrl };
 }
 
 chrome.runtime.onMessage.addListener(
     function(message, sender, sendResponse) {
+        console.log(message);
         if (message == "spend lingot") spendLingot();
+        if (message == "duo-options-saved") updateOptions(disallow);
         if (typeof sendResponse != undefined) sendResponse(isEquipped);
     }
 );
 
-disallow();
+updateOptions(disallow);
