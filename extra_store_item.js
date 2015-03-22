@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Duo-Break-Time.  If not, see <http://www.gnu.org/licenses/>.
 
-
-// NOTE: The ID changes if you clone this extension or move it around
-var EXT_ID = "lakkigdpjdfegegjilnjpliocofnddfk";
-
 var isEquipped = false;
 
 // TODO consider putting these in the config
@@ -54,7 +50,7 @@ function resetButton() {
     isEquipped = false;
 }
 
-chrome.runtime.sendMessage(EXT_ID, "getState", {}, function(response) {
+chrome.runtime.sendMessage(null, "duo-break-time-getState", {}, function(response) {
     isEquipped = response;
 });
 
@@ -84,12 +80,12 @@ ext_section.appendChild(shelf);
 
 chrome.runtime.onMessage.addListener(
     function(message, sender, sendResponse) {
-        if (message == "time up") resetButton();
+        if (message == "duo-break-time-up") resetButton();
     }
 );
 
 button.addEventListener("click", function() {
-    chrome.runtime.sendMessage(EXT_ID, "spend lingot", {}, function(response) {});
+    chrome.runtime.sendMessage(null, "duo-spend-lingot", {}, function(response) {});
     item.replaceChild(equipped, button);
 });
 

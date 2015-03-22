@@ -93,7 +93,7 @@ function disallow() {
         result.forEach(function(tab) {
             duoTabCount++;
             // make the item available in any existing ligot store page
-            chrome.tabs.sendMessage(tab.id, "time up"); 
+            chrome.tabs.sendMessage(tab.id, "duo-break-time-up"); 
         });
         chrome.tabs.query({url: blacklist}, function(result) {
             result.forEach(function(tab, i) {
@@ -197,7 +197,7 @@ function whitelistIntercept(details) {
 chrome.runtime.onMessage.addListener(
     function(message, sender, sendResponse) {
         console.log(message);
-        if (message == "spend lingot") spendLingot();
+        if (message == "duo-spend-lingot") spendLingot();
         if (message == "duo-options-saved") updateOptions(disallow);
         if (typeof sendResponse != undefined) sendResponse(isEquipped);
     }
