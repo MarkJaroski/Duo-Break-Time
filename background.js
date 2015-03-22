@@ -70,6 +70,16 @@ function updateOptions(callback) {
 
 
 function allow() {
+    var notice = {
+        type: "basic",
+        title: appName,
+        iconUrl: "lingot_lock_128.png",
+        message: "Break time is almost up!"
+    };
+    setTimeout(function() { 
+        console.log("notifying");
+        chrome.notifications.create('duoBreakTime-MinuteTogo', notice, function() {});
+    }, ( minutes - 1 ) * 60000);
     setTimeout(disallow, minutes * 60000);
     chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
     chrome.webRequest.handlerBehaviorChanged();
@@ -130,7 +140,7 @@ function spendLingot() {
 
 function errorCallback(err) {
     var notice = {
-        type: basic,
+        type: "basic",
         title: appName,
         iconUrl: "lingot_lock_128.png",
         message: err

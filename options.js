@@ -17,7 +17,9 @@ function validateMinutes() {
     var min = document.getElementById('minutes');
     console.log("validating " + min.value);
     if (!min.value) min.value = 15;
-    if (min.value < 1) min.value = 1;
+    // we need two minutes becase we post a message to the user one minute
+    // in advance
+    if (min.value < 2) min.value = 2; 
     save_options();
 }
 
