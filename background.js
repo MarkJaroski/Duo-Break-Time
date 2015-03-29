@@ -154,8 +154,8 @@ function interceptRequest(details) {
     var uri = new URI(details.url);
     var whitelisted = false;
     var alwaysAllowed = ['accounts.google.com', 'accounts.youtube.com'];
-    allwaysAllowed.forEach(function(site) {
-        if (uri.host = site) {
+    alwaysAllowed.forEach(function(site) {
+        if (uri.host == site) {
             whitelisted = true;
         }
     });
