@@ -234,18 +234,5 @@ function addListItem(list, name, pattern, favicon) {
         save_options();
 }
 
-function buildMatchingPattern(url) {
-    var pattern;
-    // XXX replace the protocol, subdomain, and path with a *
-    return (pattern);
-}
-
-function faviconLink(url) {
-    var link;
-    // XXX strip off the proto and path
-    // XXX build the google cache URL
-    return link;
-}
-
 document.addEventListener('DOMContentLoaded', restore_options);
 
