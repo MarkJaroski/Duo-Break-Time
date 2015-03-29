@@ -152,6 +152,14 @@ function errorCallback(err) {
 function interceptRequest(details) {
     console.log("Blacklist intercept");
     var uri = new URI(details.url);
+    var whitelisted = false;
+    var alwaysAllowed = ['accounts.google.com', 'accounts.youtube.com'];
+    allwaysAllowed.forEach(function(site) {
+        if (uri.host = site) {
+            whitelisted = true;
+        }
+    });
+    if (whitelisted) return;
     var notice = {
         type: "basic",
         title: appName,
@@ -202,5 +210,45 @@ chrome.runtime.onMessage.addListener(
         if (typeof sendResponse != undefined) sendResponse(isEquipped);
     }
 );
+
+function lookupUserId(username, callback) {
+    var url = "https://www.duolingo.com/users/" + username;
+    var x = new XMLHttpRequest();
+    x.open('GET', url);
+    x.responseType = 'json';
+    x.onload = function() {
+        var response = x.response;
+        if (!response || !response.id) {
+            // XXX couldn't find the user
+            console.log(username + ' not found');
+            return;
+        }
+        // XXX found the user
+        console.log(username + " has id " + response.id);
+        callback(response.id);
+    }
+    x.onerror = function() {
+        // XXX couldn't find the user
+        console.log(username + ' not found');
+    }
+    x.send();
+}
+
+function lookupCommentId(userId) {
+    var url = "https://www.duolingo.com/stream/" + userId;
+    var x = new XMLHttpRequest();
+    x.open('GET', url);
+    x.responseType = 'json';
+    x.onload = function() {
+        var response = x.response;
+        console.log(response);
+        var events = response.events;
+    }
+    x.onerror = function() {
+        // XXX couldn't find the user
+        console.log(username + ' not found');
+    }
+    x.send();
+}
 
 updateOptions(disallow);

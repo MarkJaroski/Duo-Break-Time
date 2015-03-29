@@ -109,3 +109,10 @@ var bodyObserver = new MutationObserver(function(mutations) {
 });
 
 bodyObserver.observe(document.body, {childList: true});
+
+chrome.storage.sync.get({ minutes: 15 }, function(items) {
+    if (items.minutes == 15) return; // no need to do anything
+    var newDescr = DESCR.replace('15', items.minutes);
+    desc.innerHTML = newDescr;
+});
+
