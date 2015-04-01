@@ -192,11 +192,12 @@ function checkDomainName(text, list) {
     x.onload = function() {
         var response = x.response;
         if (!response || !response.responseData || !response.responseData.results ||
-            response.responseData.results.length === 0) {
-          return;
+                response.responseData.results.length === 0) {
+            return;
         }
         var firstResult = response.responseData.results[0];
         var uri = new URI(firstResult.url);
+        if (uri.domain() == "duolingo.com") return; // users shouldn't add duo to either list
         var pattern = "*://*." + uri.domain() + "/*";
         console.log(firstResult.visibleUrl);
         var favicon = new URI(uri);
