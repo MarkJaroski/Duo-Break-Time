@@ -135,14 +135,19 @@ function deleteSelected(list) {
     console.log("deleting");
     var items = list.getElementsByTagName("input");
     var checked = items.item(0).checked;
+    var remove = [];
     for (i = 1; i < items.length; i++) { //skip i = 0
         if (items.item(i).type == 'checkbox' 
             && items.item(i).id != "duo-check" // just in case
             && items.item(i).checked) {
                 li = items.item(i).parentElement.parentElement;
-                list.removeChild(li);
+                remove.push(li);
         }
     }
+    remove.forEach(function(li) {
+        list.removeChild(li);
+    });
+    items.item(0).checked = false;
     save_options();
 }
 
