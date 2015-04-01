@@ -49,6 +49,7 @@ function updateOptions(callback) {
         var git = new URI(gitHubUrl);
         allowed = [ duo, git ];
         var sites = item.blacklist;
+        console.log(sites);
         sites = sites.concat(item.whitelist);
         sites.forEach(function (site) {
             allowed.push(new URI("http://" + site.name));
@@ -87,6 +88,12 @@ function allow() {
 }
 
 function disallow() {
+    // If there's no blacklist configured complain and quit
+    if (blacklist.length == 0) {
+        errorCallback("There are no break time sites configured. Please add at least one in the options page.");
+        return;
+    }
+
     // close active tabs, replacing the last one with duo
     chrome.tabs.query({url: ["*://*.duolingo.com/*"]}, function(result) {
         var duoTabCount = 0;
@@ -150,6 +157,7 @@ function errorCallback(err) {
 
 // This function handles our blacklist
 function interceptRequest(details) {
+    if (blacklist.length == 0) return;
     console.log("Blacklist intercept");
     var uri = new URI(details.url);
     var whitelisted = false;
