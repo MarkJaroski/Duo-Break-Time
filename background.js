@@ -27,6 +27,10 @@ var      allowed = [];
 var      minutes = 15;
 
 function updateOptions(callback) {
+    // remove any old listener, in case we're reloading options
+    chrome.webRequest.onBeforeRequest.removeListener(interceptRequest);
+    chrome.webRequest.handlerBehaviorChanged();
+
     chrome.storage.sync.get({ 
             minutes: 15,
             blacklist: [{ pattern: "*://*.youtube.com/*" }],
@@ -39,6 +43,7 @@ function updateOptions(callback) {
         minutes = item.minutes;
 
         // convert blacklist to an array of patterns
+        blacklist = [];
         var sites = item.blacklist;
         sites.forEach(function (site) {
             blacklist.push(site.pattern);
@@ -49,7 +54,6 @@ function updateOptions(callback) {
         var git = new URI(gitHubUrl);
         allowed = [ duo, git ];
         var sites = item.blacklist;
-        console.log(sites);
         sites = sites.concat(item.whitelist);
         sites.forEach(function (site) {
             allowed.push(new URI("http://" + site.name));
