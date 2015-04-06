@@ -172,21 +172,27 @@ function interceptRequest(details) {
     if (blacklist.length == 0) return;
     console.log("Blacklist intercept");
     var uri = new URI(details.url);
+
+    // always allow access to URLs required for chrome login.
     var whitelisted = false;
     var alwaysAllowed = ['accounts.google.com', 'accounts.youtube.com'];
     alwaysAllowed.forEach(function(site) {
-        if (uri.host == site) {
+        console.log(uri.host());
+        if (uri.host() == site) {
             whitelisted = true;
         }
     });
     if (whitelisted) return;
+
+    // tell the user what's going on
     var notice = {
         type: "basic",
         title: appName,
         iconUrl: iconUrl,
         message: "Access to " + uri.domain() + " will cost a lingot!"
     };
-    chrome.notifications.create('duoBreakTime-error', notice, function() {});
+    chrome.notifications.create('duoBreakTime-denyed', notice, function() {});
+
     return { redirectUrl: duoUrl };
 }
 
