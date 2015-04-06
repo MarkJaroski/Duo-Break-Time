@@ -35,7 +35,8 @@ function updateOptions(callback) {
             minutes: 15,
             blacklist: [{ pattern: "*://*.youtube.com/*" }],
             whitelist: [{ name: "www.khanacademy.com" }],
-            useWhitelist: false
+            useWhitelist: false,
+            firstRun: true
     }, function (item) {
 
         console.log("updating options");
@@ -70,6 +71,13 @@ function updateOptions(callback) {
         }
 
         callback();
+
+        // show message on first load suggesting that the user read the manual
+        if (item.firstRun) {
+            errorCallback("Welcome to Duo Break Time! If you need help please read the getting started page in the Chrome Store.");
+            chrome.storage.sync.set({ firstRun: false });
+        }
+
     });
 }
 
