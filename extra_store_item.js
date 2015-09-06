@@ -22,13 +22,16 @@ var DESCR = "Each 1 lingot purchase unlocks the list of websites specified by yo
 
 var ext_section = document.createElement("div");
 ext_section.setAttribute("class", "store-section");
+
 var section_head = document.createElement("h5");
 section_head.setAttribute("class", "gray");
+
 var shelf = document.createElement("ul");
 shelf.setAttribute("class", "store-shelf");
 var item = document.createElement("li");
 var icon = document.createElement("span");
 icon.setAttribute("class", "store-icon");
+
 var button = document.createElement("a");
 button.setAttribute("class","item-purchase btn btn-green buy-item right");
 var getfor = document.createElement("span");
@@ -40,26 +43,18 @@ price.setAttribute("class", "price");
 var equipped = document.createElement("a");
 equipped.setAttribute("class", "item-purchase btn btn-green purchased right");
 equipped.setAttribute("disabled", "disabled");
+
 var check = document.createElement("span");
 check.setAttribute("class", "icon icon-check-white-small better-margin");
 var title = document.createElement("h4");
 var desc = document.createElement("p");
 
-function resetButton() {
-    item.replaceChild(button, equipped);
-    isEquipped = false;
-}
-
-chrome.runtime.sendMessage(null, "duo-break-time-getState", {}, function(response) {
-    isEquipped = response;
-});
-
 getfor.appendChild(document.createTextNode("Get for:"));
 section_head.appendChild(document.createTextNode("EXTENSION"));
 ext_section.appendChild(section_head);
+price.appendChild(document.createTextNode("1"));
 button.appendChild(getfor);
 button.appendChild(lingot);
-price.appendChild(document.createTextNode("1"));
 button.appendChild(price);
 equipped.appendChild(check);
 equipped.appendChild(document.createTextNode(" Equipped"));
@@ -67,10 +62,40 @@ title.appendChild(document.createTextNode(TITLE));
 desc.appendChild(document.createTextNode(DESCR));
 item.appendChild(icon);
 
+function hasLingots() {
+    var num_lingots = document.getElementById("num_lingots").innerHTML;
+    console.log("User has" + num_lingots + " lingots.");
+    return (num_lingots != 0);
+}
+
+function resetButton() {
+    item.replaceChild(button, equipped);
+    if (hasLingots) {
+        button.setAttribute("class","item-purchase btn btn-green buy-item right");
+        button.removeAttribute("disabled");
+    } else {
+        button.setAttribute("class","item-purchase btn btn-green btn-outline right");
+        button.setAttribute("disabled", "disabled");
+    }
+    isEquipped = false;
+}
+
+chrome.runtime.sendMessage(null, "duo-break-time-getState", {}, function(response) {
+    isEquipped = response;
+});
+
+
 if (isEquipped) {
     item.appendChild(equipped);
 } else {
     item.appendChild(button);
+    if (hasLingots()) {
+        button.setAttribute("class","item-purchase btn btn-green buy-item right");
+        button.removeAttribute("disabled");
+    } else {
+        button.setAttribute("class","item-purchase btn btn-green btn-outline right");
+        button.setAttribute("disabled", "disabled");
+    }
 }
 
 item.appendChild(title);
@@ -86,6 +111,7 @@ chrome.runtime.onMessage.addListener(
 
 button.addEventListener("click", function() {
     chrome.runtime.sendMessage(null, "duo-spend-lingot", {}, function(response) {});
+    document.getElementById("num_lingots").innerHTML--;
     item.replaceChild(equipped, button);
 });
 
